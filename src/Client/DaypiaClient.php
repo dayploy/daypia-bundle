@@ -21,6 +21,10 @@ class DaypiaClient
     final public const SET_MEDIAFILE_FIRST_CHAPTER_ENDPOINT = '/v1/machine/setmediafilefirstchapter';
     final public const SET_CHAPTER_CONTENT_ENDPOINT = '/v1/machine/setchaptercontent';
     final public const CHUNK_CHAPTER_ENDPOINT = '/v1/machine/chunk-chapter';
+    final public const PDF_TO_TEXT_ENDPOINT = '/v1/machine/pdf/get_content';
+    final public const GENERATE_JSON_ENDPOINT = '/v1/machine/generate/json';
+    final public const GENERATE_EXCEL_ENDPOINT = '/v1/machine/excel/generate';
+    final public const GENERATE_SHEETS_ENDPOINT = '/v1/machine/sheets/generate';
 
     public function __construct(
         private readonly HttpClientInterface $client,
@@ -110,6 +114,60 @@ class DaypiaClient
                 'chapterId' => (string) $chapterId,
             ],
         );
+    }
+
+    public function getPdfContent(
+        string $filePath,
+    ): string {
+        $file = new UploadedFile(
+            path: $filePath,
+            originalName: 'file.pdf',
+            mimeType: 'application/pdf',
+        );
+
+        return $this->execute(
+            endpoint: self::PDF_TO_TEXT_ENDPOINT,
+            isMultipart: true,
+            file: $file,
+        )->toArray()['content'];
+    }
+
+    public function getStructured(
+        string $prompt,
+        string $systemPrompt,
+    ): array {
+        return $this->execute(
+            endpoint: self::GENERATE_JSON_ENDPOINT,
+            json: [
+                'prompt' => $prompt,
+                'systemPrompt' => $systemPrompt,
+            ],
+        )->toArray()['result'];
+    }
+
+    public function getSheets(
+        array $structured,
+        bool $autosize = false,
+    ): array {
+        return $this->execute(
+            endpoint: self::GENERATE_SHEETS_ENDPOINT,
+            json: [
+                'data' => $structured,
+                'autosize' => $autosize,
+            ],
+        )->toArray()['sheets'];
+    }
+
+    public function getExcel(
+        array $sheets,
+    ): string {
+        return $this->execute(
+            endpoint: self::GENERATE_EXCEL_ENDPOINT,
+            json: [
+                'sheets' => $sheets,
+                'autosize' => true,
+            ],
+        )->getContent();
     }
 
     private function execute(
