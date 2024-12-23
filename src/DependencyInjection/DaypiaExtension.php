@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Dayploy\DaypliaBundle\DependencyInjection;
+namespace Dayploy\DaypiaBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
