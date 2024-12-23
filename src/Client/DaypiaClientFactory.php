@@ -31,7 +31,7 @@ readonly class DaypiaClientFactory
             return $httpClient;
         }
 
-        $daypiaBaseUrl = getenv('DAYPIA_BASE_URL') ?? 'api.daypia.com';
+        $daypiaBaseUrl = getenv('DAYPIA_BASE_URL') ? getenv('DAYPIA_BASE_URL'): 'https://api.daypia.com';
         $daypiaApiKey = getenv('DAYPIA_API_KEY');
 
         $options = [
