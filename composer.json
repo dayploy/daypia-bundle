@@ -1,0 +1,25 @@
+{
+    "name": "dayploy/daypia-bundle",
+    "type": "symfony-bundle",
+    "autoload": {
+        "psr-4": {
+            "Dayploy\\DaypiaBundle\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Dayploy\\DaypiaBundle\\Tests\\": "tests/"
+        }
+    },
+    "license": "MIT",
+    "require": {
+        "php": "^8.2",
+        "symfony/framework-bundle": "^7.1",
+        "symfony/http-client-contracts": "^3.5",
+        "symfony/mime": "^7.1"
+    },
+    "require-dev": {
+        "symfony/uid": "^7.1",
+        "friendsofphp/php-cs-fixer": "*"
+    }
+}

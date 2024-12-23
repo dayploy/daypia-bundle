@@ -1,0 +1,7 @@
+services:
+    Dayploy\DaypiaBundle\Client\DaypiaClientFactory:
+        public: true
+        class: "Dayploy\\DaypiaBundle\\Client\\DaypiaClientFactory"
+        arguments:
+            - '@logger'
+            - '@Symfony\Contracts\HttpClient\HttpClientInterface'
