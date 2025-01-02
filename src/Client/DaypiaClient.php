@@ -186,6 +186,15 @@ class DaypiaClient
                 $headers['Content-Type'] = 'multipart/form-data';
             }
 
+            // add trace ids from openTelemetry
+            if (class_exists(\OpenTelemetry\API\Trace\Span::class)) {
+                $context = \OpenTelemetry\API\Trace\Span::getCurrent()->getContext();
+                if ($context->isValid()) {
+                    $headers['traceId'] = $context->getTraceId();
+                    $headers['parentSpanId'] = $context->getSpanId();
+                }
+            }
+
             $options = [
                 'headers' => $headers,
             ];
