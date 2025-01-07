@@ -19,6 +19,7 @@ class DaypiaClient
     final public const CREATE_MEDIAFILE_ENDPOINT = '/v1/machine/createmediafile';
     final public const CREATE_CHUNK_ENDPOINT = '/v1/machine/chunk/create';
     final public const SEARCH_CHUNK_ENDPOINT = '/v1/machine/chunk/search';
+    final public const GENERATE_TEXT_ENDPOINT = '/v1/machine/generate/text';
     final public const CREATE_CHAPTER_ENDPOINT = '/v1/machine/createchapter';
     final public const SET_PREVIOUS_CHAPTER_ENDPOINT = '/v1/machine/setpreviouschapter';
     final public const SET_MEDIAFILE_FIRST_CHAPTER_ENDPOINT = '/v1/machine/setmediafilefirstchapter';
@@ -94,6 +95,27 @@ class DaypiaClient
         }
 
         return $chunks;
+    }
+
+    public function generateText(
+        Uuid $projectId,
+        string $prompt,
+        ?string $systemPrompt = null,
+        bool $useContext = true,
+        int $contextMaxResults = 10,
+    ): string {
+        $reponse = $this->execute(
+            endpoint: self::GENERATE_TEXT_ENDPOINT,
+            json: [
+                'projectId' => (string) $projectId,
+                'prompt' => $prompt,
+                'systemPrompt' => $systemPrompt,
+                'useContext' => $useContext,
+                'contextMaxResults' => $contextMaxResults,
+            ],
+        );
+
+        return $reponse->getContent();
     }
 
     public function createChapter(
