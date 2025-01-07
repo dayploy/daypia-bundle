@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Dayploy\DaypiaBundle\Client;
 
+use Dayploy\DaypiaBundle\Model\Chunk;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -16,6 +17,8 @@ use Symfony\Contracts\HttpClient\ResponseInterface;
 class DaypiaClient
 {
     final public const CREATE_MEDIAFILE_ENDPOINT = '/v1/machine/createmediafile';
+    final public const CREATE_CHUNK_ENDPOINT = '/v1/machine/chunk/create';
+    final public const SEARCH_CHUNK_ENDPOINT = '/v1/machine/chunk/search';
     final public const CREATE_CHAPTER_ENDPOINT = '/v1/machine/createchapter';
     final public const SET_PREVIOUS_CHAPTER_ENDPOINT = '/v1/machine/setpreviouschapter';
     final public const SET_MEDIAFILE_FIRST_CHAPTER_ENDPOINT = '/v1/machine/setmediafilefirstchapter';
@@ -47,6 +50,50 @@ class DaypiaClient
             isMultipart: true,
             file: $file,
         );
+    }
+
+    public function createChunk(
+        Uuid $projectId,
+        string $text,
+    ): void {
+        $this->execute(
+            endpoint: self::CREATE_CHUNK_ENDPOINT,
+            json: [
+                'projectId' => (string) $projectId,
+                'text' => $text,
+            ],
+        );
+    }
+
+    /**
+     * @return Chunk[]
+     */
+    public function searchChunk(
+        Uuid $projectId,
+        string $search,
+        int $maxResults = 10,
+    ): array {
+        $reponse = $this->execute(
+            endpoint: self::SEARCH_CHUNK_ENDPOINT,
+            json: [
+                'projectId' => (string) $projectId,
+                'search' => $search,
+                'maxResults' => $maxResults,
+            ],
+        );
+
+        $data = json_decode($reponse->getContent(), true);
+
+        $chunks = [];
+        foreach ($data['hydra:member'] as $row) {
+            $chunks[] = new Chunk(
+                id: Uuid::fromString($row['id']),
+                text: $row['text'],
+                similarity: $row['similarity'],
+            );
+        }
+
+        return $chunks;
     }
 
     public function createChapter(
