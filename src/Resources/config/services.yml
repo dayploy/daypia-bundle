@@ -5,3 +5,6 @@ services:
         arguments:
             - '@logger'
             - '@Symfony\Contracts\HttpClient\HttpClientInterface'
+    Dayploy\DaypiaBundle\Client\DaypiaClient:
+        factory: ['@Dayploy\DaypiaBundle\Client\DaypiaClientFactory', 'createClient']
+        arguments: [null]
