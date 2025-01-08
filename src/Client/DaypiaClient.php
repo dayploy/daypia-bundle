@@ -13,6 +13,7 @@ use Symfony\Component\Mime\Part\Multipart\FormDataPart;
 use Symfony\Component\Uid\Uuid;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
+use Symfony\Contracts\HttpClient\ResponseStreamInterface;
 
 class DaypiaClient
 {
@@ -103,8 +104,9 @@ class DaypiaClient
         ?string $systemPrompt = null,
         bool $useContext = true,
         int $contextMaxResults = 10,
-    ): string {
-        $reponse = $this->execute(
+        bool $stream = false,
+    ): string|ResponseStreamInterface {
+        $response = $this->execute(
             endpoint: self::GENERATE_TEXT_ENDPOINT,
             json: [
                 'projectId' => (string) $projectId,
@@ -115,7 +117,11 @@ class DaypiaClient
             ],
         );
 
-        return $reponse->getContent();
+        if ($stream) {
+            return $this->client->stream($response);
+        }
+
+        return $response->getContent();
     }
 
     public function createChapter(
