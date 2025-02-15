@@ -57,12 +57,14 @@ class DaypiaClient
     public function createChunk(
         Uuid $projectId,
         string $text,
+        ?string $reference = null,
     ): void {
         $this->execute(
             endpoint: self::CREATE_CHUNK_ENDPOINT,
             json: [
                 'projectId' => (string) $projectId,
                 'text' => $text,
+                'reference' => $reference,
             ],
         );
     }
